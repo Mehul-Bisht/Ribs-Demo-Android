@@ -13,6 +13,7 @@
         android:gravity="end"
         android:paddingTop="8dp"
         android:paddingEnd="16dp"
+        android:textColor="@color/purple_700"
         android:text="Check Filters"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv"
+        android:id="@+id/RecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

@@ -84,10 +84,10 @@ class CategoryInteractor : Interactor<CategoryInteractor.CategoryPresenter, Cate
                         getByRarity(it)
                     }
                 }
-            },
-                {
-                    it.printStackTrace()
-                })
+            }
+            ) {
+                it.printStackTrace()
+            }
     }
 
     fun getByRarity(rarity: String) {
@@ -112,11 +112,10 @@ class CategoryInteractor : Interactor<CategoryInteractor.CategoryPresenter, Cate
                             }
                         }
                     }
-                },
-                {
-                    it.printStackTrace()
                 }
-            )
+            ) {
+                it.printStackTrace()
+            }
     }
 
     override fun willResignActive() {

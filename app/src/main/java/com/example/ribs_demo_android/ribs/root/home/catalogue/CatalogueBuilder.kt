@@ -20,6 +20,8 @@ import com.uber.rib.core.ViewBuilder
 import dagger.Binds
 import dagger.BindsInstance
 import dagger.Provides
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.annotation.Retention
@@ -77,6 +79,10 @@ class CatalogueBuilder(dependency: ParentComponent) :
         @dagger.Module
         companion object {
 
+            var logging : HttpLoggingInterceptor = HttpLoggingInterceptor().setLevel(
+                HttpLoggingInterceptor.Level.BODY)
+            var clientCatalogue : OkHttpClient = OkHttpClient.Builder().addInterceptor(logging).build()
+
             @CatalogueScope
             @Provides
             @JvmStatic
@@ -132,6 +138,7 @@ class CatalogueBuilder(dependency: ParentComponent) :
                     .baseUrl(Constants.BASE_URL)
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(gsonConverterFactory)
+                    .client(clientCatalogue)
                     .build()
             }
 

@@ -83,24 +83,23 @@ class DetailsInteractor : Interactor<DetailsInteractor.DetailsPresenter, Details
                                                 }
                                             }
                                         }
-                                    },
-                                    { e ->
-                                        e.printStackTrace()
                                     }
-                                )
+                                ) { e ->
+                                    e.printStackTrace()
+                                }
                         }
                     }
-                },
-                {
-                    it.printStackTrace()
                 }
-            )
+            ) {
+                it.printStackTrace()
+            }
     }
 
     fun onBack() {
         presenter.onBack()
             .subscribeOn(detailsScheduler.io)
             .observeOn(detailsScheduler.main)
+            .`as`(AutoDispose.autoDisposable(this))
             .subscribe(
                 object : Consumer<Boolean> {
                     override fun accept(t: Boolean?) {
@@ -108,11 +107,10 @@ class DetailsInteractor : Interactor<DetailsInteractor.DetailsPresenter, Details
                             detailsListener.onBackPress()
                         }
                     }
-                },
-                {
-                    it.printStackTrace()
                 }
-            )
+            ) {
+                it.printStackTrace()
+            }
     }
 
     override fun willResignActive() {

@@ -6,6 +6,7 @@ import com.example.ribs_demo_android.network.CatalogueService
 import com.example.ribs_demo_android.ribs.root.home.catalogue.details.DetailsInteractor
 import com.example.ribs_demo_android.ribs.root.repository.CatalogueRepository
 import com.example.ribs_demo_android.util.Resource
+import com.uber.autodispose.AutoDispose
 import com.uber.rib.core.Bundle
 import com.uber.rib.core.Interactor
 import com.uber.rib.core.RibInteractor
@@ -51,6 +52,7 @@ class CatalogueInteractor : Interactor<CatalogueInteractor.CataloguePresenter, C
         getInitialData(1)
             .subscribeOn(catalogueScheduler.io)
             .observeOn(catalogueScheduler.main)
+            .`as`(AutoDispose.autoDisposable(this))
             .subscribe(
                 object : Consumer<Resource<CatalogueResponse>> {
                     override fun accept(t: Resource<CatalogueResponse>?) {
@@ -72,11 +74,10 @@ class CatalogueInteractor : Interactor<CatalogueInteractor.CataloguePresenter, C
                                                         dataStream.setData(it)
                                                     }
                                                 }
-                                            },
-                                            {
-                                                it.printStackTrace()
                                             }
-                                        )
+                                        ) {
+                                            it.printStackTrace()
+                                        }
                                 }
                                 is Resource.Error -> {
                                     presenter.updateProgressbarState(false)
@@ -85,11 +86,10 @@ class CatalogueInteractor : Interactor<CatalogueInteractor.CataloguePresenter, C
                             }
                         }
                     }
-                },
-                {
-                    it.printStackTrace()
                 }
-            )
+            ) {
+                it.printStackTrace()
+            }
 
         handleCategoryToggle()
     }
@@ -102,6 +102,7 @@ class CatalogueInteractor : Interactor<CatalogueInteractor.CataloguePresenter, C
         presenter.onCategoryToggle()
             .subscribeOn(catalogueScheduler.io)
             .observeOn(catalogueScheduler.main)
+            .`as`(AutoDispose.autoDisposable(this))
             .subscribe(object: Consumer<Boolean> {
                 override fun accept(t: Boolean?) {
                     t?.let {

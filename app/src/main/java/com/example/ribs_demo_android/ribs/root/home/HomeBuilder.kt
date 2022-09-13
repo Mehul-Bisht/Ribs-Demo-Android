@@ -18,6 +18,8 @@ import com.uber.rib.core.ViewBuilder
 import dagger.Binds
 import dagger.BindsInstance
 import dagger.Provides
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.annotation.Retention
@@ -72,6 +74,10 @@ class HomeBuilder(dependency: ParentComponent) :
         @dagger.Module
         companion object {
 
+            var logging : HttpLoggingInterceptor = HttpLoggingInterceptor().setLevel(
+                HttpLoggingInterceptor.Level.BODY)
+            var clientHome : OkHttpClient = OkHttpClient.Builder().addInterceptor(logging).build()
+
             @HomeScope
             @Provides
             @JvmStatic
@@ -91,6 +97,7 @@ class HomeBuilder(dependency: ParentComponent) :
                     .baseUrl(Constants.BASE_URL)
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(gsonConverterFactory)
+                    .client(clientHome)
                     .build()
             }
 

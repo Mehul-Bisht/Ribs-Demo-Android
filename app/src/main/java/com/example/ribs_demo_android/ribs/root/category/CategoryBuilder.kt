@@ -15,6 +15,7 @@ import com.uber.rib.core.ViewBuilder
 import dagger.Binds
 import dagger.BindsInstance
 import dagger.Provides
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.annotation.Retention
@@ -22,6 +23,7 @@ import java.lang.annotation.RetentionPolicy.CLASS
 import javax.inject.Named
 import javax.inject.Qualifier
 import javax.inject.Scope
+import okhttp3.logging.HttpLoggingInterceptor
 
 /**
  * Builder for the {@link CategoryScope}.
@@ -38,6 +40,7 @@ class CategoryBuilder(dependency: ParentComponent) :
      * @return a new [CategoryRouter].
      */
     fun build(parentViewGroup: ViewGroup): CategoryRouter {
+
         val view = createView(parentViewGroup)
         val interactor = CategoryInteractor()
         val component = DaggerCategoryBuilder_Component.builder()
@@ -69,6 +72,10 @@ class CategoryBuilder(dependency: ParentComponent) :
         @dagger.Module
         companion object {
 
+            var logging : HttpLoggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+            var client : OkHttpClient = OkHttpClient.Builder().addInterceptor(logging).build()
+
+
             @Provides
             fun providesGsonConverterFactory(): GsonConverterFactory {
                 return GsonConverterFactory.create()
@@ -84,6 +91,7 @@ class CategoryBuilder(dependency: ParentComponent) :
                     .baseUrl(Constants.BASE_URL)
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(gsonConverterFactory)
+                    .client(client)
                     .build()
             }
 

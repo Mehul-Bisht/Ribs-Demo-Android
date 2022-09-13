@@ -31,7 +31,7 @@ class CatalogueView @JvmOverloads constructor(
         adapter = CatalogueAdapter(items) { name ->
             listener?.invoke(name)
         }
-        findViewById<RecyclerView>(R.id.rv).adapter = adapter
+        findViewById<RecyclerView>(R.id.RecyclerView).adapter = adapter
         return object : Observable<String>() {
             override fun subscribeActual(observer: Observer<in String>?) {
                 listener = { name ->
@@ -48,6 +48,8 @@ class CatalogueView @JvmOverloads constructor(
     override fun onCategoryToggle(): Observable<Boolean> {
         return object : Observable<Boolean>() {
             override fun subscribeActual(observer: Observer<in Boolean>?) {
+                fun printCurrentThread(tag: String) = println("$tag: ${Thread.currentThread().name.substringBefore("-")}")
+                printCurrentThread("main thread name")
                 findViewById<TextView>(R.id.filters).setOnClickListener {
                     observer?.onNext(true)
                 }

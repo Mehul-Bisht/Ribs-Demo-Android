@@ -31,11 +31,10 @@ class CatalogueRepositoryImpl(
                                     observer?.onNext(Resource.Success(it))
                                 }
                             }
-                        },
-                        {
-                            observer?.onNext(Resource.Error(it.message.toString()))
                         }
-                    )
+                    ) {
+                        observer?.onNext(Resource.Error(it.message.toString()))
+                    }
             }
         }
     }
@@ -54,11 +53,10 @@ class CatalogueRepositoryImpl(
                                     observer?.onNext(Resource.Success(it))
                                 }
                             }
-                        },
-                        {
-                            observer?.onNext(Resource.Error(it.message.toString()))
                         }
-                    )
+                    ) {
+                        observer?.onNext(Resource.Error(it.message.toString()))
+                    }
             }
         }
     }
