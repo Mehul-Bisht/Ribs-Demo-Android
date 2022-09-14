@@ -2,23 +2,16 @@ package com.example.ribs_demo_android.ribs.root.home.catalogue.details
 
 import android.util.Log
 import com.example.ribs_demo_android.models.CatalogueDetail
-import com.example.ribs_demo_android.network.CatalogueService
 import com.example.ribs_demo_android.network.DetailsService
-import com.example.ribs_demo_android.ribs.root.home.catalogue.CatalogueScheduler
 import com.example.ribs_demo_android.ribs.root.home.catalogue.DataStream
-import com.example.ribs_demo_android.ribs.root.repository.CatalogueRepository
 import com.example.ribs_demo_android.ribs.root.repository.DetailsRepository
 import com.example.ribs_demo_android.util.Resource
 import com.uber.autodispose.AutoDispose
 import com.uber.rib.core.Bundle
 import com.uber.rib.core.Interactor
 import com.uber.rib.core.RibInteractor
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
-import javax.inject.Named
 
 /**
  * Coordinates Business Logic for [DetailsScope].
@@ -27,6 +20,9 @@ import javax.inject.Named
  */
 @RibInteractor
 class DetailsInteractor : Interactor<DetailsInteractor.DetailsPresenter, DetailsRouter>() {
+    companion object {
+        const val TAG = "DetailsInteractor"
+    }
 
     @Inject
     lateinit var presenter: DetailsPresenter
@@ -58,58 +54,41 @@ class DetailsInteractor : Interactor<DetailsInteractor.DetailsPresenter, Details
     fun setupUI() {
         dataStream.data()
             .`as`(AutoDispose.autoDisposable(this))
-            .subscribe(
-                object : Consumer<String> {
-                    override fun accept(t: String?) {
-                        t?.let {
-                            detailsRepository.getDetail(it)
-                                .subscribeOn(detailsScheduler.io)
-                                .observeOn(detailsScheduler.main)
-                                .subscribe(
-                                    object : Consumer<Resource<CatalogueDetail>> {
-                                        override fun accept(t: Resource<CatalogueDetail>?) {
-                                            t?.let {
-                                                when (it) {
-                                                    is Resource.Loading -> {
-                                                        presenter.updateProgressbarState(true)
-                                                    }
-                                                    is Resource.Success -> {
-                                                        presenter.setData(it.data!!)
-                                                        presenter.updateProgressbarState(false)
-                                                    }
-                                                    is Resource.Error -> {
-                                                        presenter.updateProgressbarState(false)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                ) { e ->
-                                    e.printStackTrace()
-                                }
-                        }
-                    }
-                }
-            ) {
-                it.printStackTrace()
+            .subscribe({fetchDetails(it)}) {
+                Log.e(TAG, it.toString())
             }
+    }
+
+    private fun fetchDetails(detail: String) {
+        detailsRepository.getDetail(detail)
+            .subscribeOn(detailsScheduler.io)
+            .observeOn(detailsScheduler.main)
+            .subscribe({ res -> handleResult(res) }) {
+                Log.e(TAG, it.toString())
+            }
+    }
+
+    private fun handleResult(result: Resource<CatalogueDetail>) {
+        when (result) {
+            is Resource.Loading -> {
+                presenter.updateProgressbarState(true)
+            }
+            is Resource.Success -> {
+                presenter.setData(result.data!!)
+                presenter.updateProgressbarState(false)
+            }
+            is Resource.Error -> {
+                presenter.updateProgressbarState(false)
+            }
+        }
     }
 
     fun onBack() {
         presenter.onBack()
-            .subscribeOn(detailsScheduler.io)
+            .subscribeOn(detailsScheduler.main)
             .observeOn(detailsScheduler.main)
-            .`as`(AutoDispose.autoDisposable(this))
-            .subscribe(
-                object : Consumer<Boolean> {
-                    override fun accept(t: Boolean?) {
-                        t?.let {
-                            detailsListener.onBackPress()
-                        }
-                    }
-                }
-            ) {
-                it.printStackTrace()
+            .subscribe({detailsListener.onBackPress()}) {
+                Log.e(TAG, it.toString())
             }
     }
 

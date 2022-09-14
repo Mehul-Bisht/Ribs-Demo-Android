@@ -34,6 +34,7 @@ class DetailsBuilder(dependency: ParentComponent) :
      */
     fun build(parentViewGroup: ViewGroup): DetailsRouter {
         val view = createView(parentViewGroup)
+        view.initViewIds()
         val interactor = DetailsInteractor()
         val component = DaggerDetailsBuilder_Component.builder()
             .parentComponent(dependency)

@@ -66,10 +66,9 @@ class CategoryInteractor : Interactor<CategoryInteractor.CategoryPresenter, Cate
         presenter.toggle()
             .doOnSubscribe { disposables.add(it)}
             .subscribe({
-                Log.e(TAG, "handleToggleSuccess::$it :: Thread:: ${Thread.currentThread().name}")
                 categoryToggleListener.toggleCategory()
             }) {
-                Log.e(TAG, "handleToggleFailed::$it :: Thread:: ${Thread.currentThread().name}")
+                Log.e(TAG, "handleToggleFailed::$it ::Thread:: ${Thread.currentThread().name}")
             }
     }
 
