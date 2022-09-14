@@ -11,9 +11,14 @@ import com.example.ribs_demo_android.databinding.ItemCategoryBinding
 import com.example.ribs_demo_android.models.Catalogue
 
 class CategoryAdapter(
-    private val items: List<Catalogue>,
     private val onClick: (String) -> Unit
 ) : RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
+    private var items: List<Catalogue> = emptyList()
+
+    fun setItems(items:List<Catalogue>){
+        this.items = items
+        notifyDataSetChanged()
+    }
 
     inner class ViewHolder(private val binding: ItemCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {

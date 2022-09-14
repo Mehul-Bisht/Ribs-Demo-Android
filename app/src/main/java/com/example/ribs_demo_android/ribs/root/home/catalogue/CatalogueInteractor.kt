@@ -95,14 +95,8 @@ class CatalogueInteractor : Interactor<CatalogueInteractor.CataloguePresenter, C
             .subscribeOn(catalogueScheduler.io)
             .observeOn(catalogueScheduler.main)
             .doOnSubscribe { disposables.add(it) }
-            .subscribe { t ->
-                Log.e(
-                    "CategoryInteractor",
-                    "handleCategoryToggle:Subscribe block${Thread.currentThread().name}"
-                )
-                t.let {
-                    catalogueListener.onClick()
-                }
+            .subscribe({catalogueListener.onClick()}) {
+                Log.e(TAG, "handleCategoryToggle:: $it")
             }
     }
 

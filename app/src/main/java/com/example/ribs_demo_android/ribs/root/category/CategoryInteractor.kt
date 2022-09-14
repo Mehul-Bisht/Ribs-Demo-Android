@@ -1,6 +1,6 @@
 package com.example.ribs_demo_android.ribs.root.category
 
-import androidx.annotation.VisibleForTesting
+import android.util.Log
 import com.example.ribs_demo_android.models.Catalogue
 import com.example.ribs_demo_android.models.CatalogueResponse
 import com.example.ribs_demo_android.network.CategoryService
@@ -10,10 +10,8 @@ import com.example.ribs_demo_android.util.Resource
 import com.uber.rib.core.Bundle
 import com.uber.rib.core.Interactor
 import com.uber.rib.core.RibInteractor
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -24,7 +22,9 @@ import javax.inject.Named
  */
 @RibInteractor
 class CategoryInteractor : Interactor<CategoryInteractor.CategoryPresenter, CategoryRouter>() {
-
+    companion object {
+        const val TAG = "CategoryInteractor"
+    }
     @Inject
     lateinit var presenter: CategoryPresenter
 
@@ -43,6 +43,7 @@ class CategoryInteractor : Interactor<CategoryInteractor.CategoryPresenter, Cate
 //    lateinit var categoryRepository: CategoryRepository
 
     lateinit var categoryRepository: CategoryRepository
+    private var disposables = CompositeDisposable()
 
     override fun didBecomeActive(savedInstanceState: Bundle?) {
         super.didBecomeActive(savedInstanceState)
@@ -63,64 +64,56 @@ class CategoryInteractor : Interactor<CategoryInteractor.CategoryPresenter, Cate
 
     fun handleToggle() {
         presenter.toggle()
-            .subscribeOn(categoryScheduler.io)
-            .observeOn(categoryScheduler.main)
-            .subscribe(object : Consumer<Boolean> {
-                override fun accept(t: Boolean?) {
-                    t?.let {
-                        categoryToggleListener.toggleCategory()
-                    }
-                }
-            })
+            .doOnSubscribe { disposables.add(it)}
+            .subscribe({
+                Log.e(TAG, "handleToggleSuccess::$it :: Thread:: ${Thread.currentThread().name}")
+                categoryToggleListener.toggleCategory()
+            }) {
+                Log.e(TAG, "handleToggleFailed::$it :: Thread:: ${Thread.currentThread().name}")
+            }
     }
 
     fun getChip() {
         presenter.getChip()
+            .doOnSubscribe { disposables.add(it)}
             .subscribeOn(categoryScheduler.io)
             .observeOn(categoryScheduler.main)
-            .subscribe(object : Consumer<String> {
-                override fun accept(t: String?) {
-                    t?.let {
-                        getByRarity(it)
-                    }
-                }
-            }
-            ) {
-                it.printStackTrace()
+            .subscribe({getByRarity(it)}){
+                Log.e(TAG, "getChip$it")
             }
     }
 
     fun getByRarity(rarity: String) {
         categoryRepository.getByRarity(rarity)
             .subscribeOn(categoryScheduler.io)
+            .doOnSubscribe { disposables.add(it)}
             .observeOn(categoryScheduler.main)
-            .subscribe(
-                object : Consumer<Resource<CatalogueResponse>> {
-                    override fun accept(t: Resource<CatalogueResponse>?) {
-                        t?.let {
-                            when (it) {
-                                is Resource.Loading -> {
-                                    presenter.updateProgressbarState(true)
-                                }
-                                is Resource.Success -> {
-                                    presenter.setup(it.data?.brawlers!!)
-                                    presenter.updateProgressbarState(false)
-                                }
-                                is Resource.Error -> {
-                                    presenter.updateProgressbarState(false)
-                                }
-                            }
-                        }
-                    }
-                }
-            ) {
-                it.printStackTrace()
+            .subscribe({handleResult(it)}) {
+                Log.e(TAG, "getByRarity::$it")
             }
+    }
+
+    private fun handleResult(result: Resource<CatalogueResponse>) {
+        when (result) {
+            is Resource.Loading -> {
+                presenter.updateProgressbarState(true)
+            }
+            is Resource.Success -> {
+                presenter.setup(result.data?.brawlers!!)
+                presenter.updateProgressbarState(false)
+            }
+            is Resource.Error -> {
+                presenter.updateProgressbarState(false)
+            }
+        }
     }
 
     override fun willResignActive() {
         super.willResignActive()
-
+        if (!disposables.isDisposed) {
+            disposables.dispose()
+            disposables = CompositeDisposable()
+        }
         // TODO: Perform any required clean up here, or delete this method entirely if not needed.
     }
 

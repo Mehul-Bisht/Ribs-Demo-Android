@@ -24,6 +24,7 @@ import javax.inject.Named
 import javax.inject.Qualifier
 import javax.inject.Scope
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 
 /**
  * Builder for the {@link CategoryScope}.
@@ -42,6 +43,7 @@ class CategoryBuilder(dependency: ParentComponent) :
     fun build(parentViewGroup: ViewGroup): CategoryRouter {
 
         val view = createView(parentViewGroup)
+        view.initViewIds()
         val interactor = CategoryInteractor()
         val component = DaggerCategoryBuilder_Component.builder()
             .parentComponent(dependency)
@@ -89,7 +91,7 @@ class CategoryBuilder(dependency: ParentComponent) :
             ): Retrofit {
                 return Retrofit.Builder()
                     .baseUrl(Constants.BASE_URL)
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                     .addConverterFactory(gsonConverterFactory)
                     .client(client)
                     .build()

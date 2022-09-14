@@ -2,14 +2,11 @@ package com.example.ribs_demo_android.network.repository
 
 import com.example.ribs_demo_android.models.CatalogueResponse
 import com.example.ribs_demo_android.network.CategoryService
+import com.example.ribs_demo_android.network.createResult
 import com.example.ribs_demo_android.ribs.root.category.CategoryScheduler
 import com.example.ribs_demo_android.ribs.root.repository.CategoryRepository
 import com.example.ribs_demo_android.util.Resource
-import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.core.Observable
 
 class CategoryRepositoryImpl(
     private val categoryService: CategoryService,
@@ -17,24 +14,6 @@ class CategoryRepositoryImpl(
 ) : CategoryRepository {
 
     override fun getByRarity(rarity: String): Observable<Resource<CatalogueResponse>> {
-        return object : Observable<Resource<CatalogueResponse>>() {
-            override fun subscribeActual(observer: Observer<in Resource<CatalogueResponse>>?) {
-                observer?.onNext(Resource.Loading())
-                categoryService.getByRarity(rarity)
-                    .subscribeOn(categoryScheduler.io)
-                    .observeOn(categoryScheduler.main)
-                    .subscribe(
-                        object : Consumer<CatalogueResponse> {
-                            override fun accept(t: CatalogueResponse?) {
-                                t?.let {
-                                    observer?.onNext(Resource.Success(it))
-                                }
-                            }
-                        }
-                    ) {
-                        observer?.onNext(Resource.Error(it.message.toString()))
-                    }
-            }
-        }
+        return createResult(categoryService.getByRarity(rarity))
     }
 }
