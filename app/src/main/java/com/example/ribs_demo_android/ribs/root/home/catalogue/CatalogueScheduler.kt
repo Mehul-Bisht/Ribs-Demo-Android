@@ -1,8 +1,9 @@
 package com.example.ribs_demo_android.ribs.root.home.catalogue
 
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.schedulers.Schedulers
+
 
 interface CatalogueScheduler {
     val io: Scheduler

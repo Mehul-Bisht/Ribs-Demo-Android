@@ -6,7 +6,6 @@ import com.example.ribs_demo_android.R
 import com.example.ribs_demo_android.network.CatalogueService
 import com.example.ribs_demo_android.network.DetailsService
 import com.example.ribs_demo_android.network.repository.DetailsRepositoryImpl
-import com.example.ribs_demo_android.ribs.root.home.HomeBuilder
 import com.example.ribs_demo_android.ribs.root.home.catalogue.details.DetailsBuilder
 import com.example.ribs_demo_android.ribs.root.home.catalogue.details.DetailsInteractor
 import com.example.ribs_demo_android.ribs.root.home.catalogue.details.DetailsScheduler
@@ -46,6 +45,7 @@ class CatalogueBuilder(dependency: ParentComponent) :
      */
     fun build(parentViewGroup: ViewGroup): CatalogueRouter {
         val view = createView(parentViewGroup)
+        view.initViewIds()
         val interactor = CatalogueInteractor()
         val component = DaggerCatalogueBuilder_Component.builder()
             .parentComponent(dependency)

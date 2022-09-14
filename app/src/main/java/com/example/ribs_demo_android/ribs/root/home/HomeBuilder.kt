@@ -21,6 +21,7 @@ import dagger.Provides
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy.CLASS
@@ -105,8 +106,14 @@ class HomeBuilder(dependency: ParentComponent) :
             @Provides
             @JvmStatic
             internal fun provideService(
-                retrofit: Retrofit
+                gsonConverterFactory: GsonConverterFactory
             ): CatalogueService {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(Constants.BASE_URL)
+                    .addConverterFactory(gsonConverterFactory)
+                    .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+                    .client(clientHome)
+                    .build()
                 return retrofit.create(CatalogueService::class.java)
             }
 

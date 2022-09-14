@@ -7,13 +7,13 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ribs_demo_android.R
 import com.example.ribs_demo_android.ribs.root.home.catalogue.adapter.CatalogueAdapter.CatalogueAdapter
 import com.example.ribs_demo_android.models.Catalogue
-import io.reactivex.Observable
-import io.reactivex.Observer
+import com.jakewharton.rxbinding4.view.clicks
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 /**
  * Top level view for {@link CatalogueBuilder.CatalogueScope}.
@@ -23,37 +23,38 @@ class CatalogueView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ) : ConstraintLayout(context, attrs, defStyle), CatalogueInteractor.CataloguePresenter {
+    private lateinit var catalogueRecycler: RecyclerView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var tvFilters: TextView
 
-    private var adapter: CatalogueAdapter? = null
-    private var listener: ((String) -> Unit)? = null
+    private lateinit var adapter: CatalogueAdapter
+    private val itemTaps = PublishSubject.create<String>()
+    private val filterTaps = PublishSubject.create<Boolean>()
 
-    override fun setupUI(items: List<Catalogue>): Observable<String> {
-        adapter = CatalogueAdapter(items) { name ->
-            listener?.invoke(name)
+    fun initViewIds() {
+        this.catalogueRecycler = findViewById(R.id.RecyclerView)
+        this.progressBar = findViewById(R.id.progressbar_catalogue)
+        this.tvFilters = findViewById(R.id.filters)
+        adapter = CatalogueAdapter { name ->
+           itemTaps.onNext(name)
         }
-        findViewById<RecyclerView>(R.id.RecyclerView).adapter = adapter
-        return object : Observable<String>() {
-            override fun subscribeActual(observer: Observer<in String>?) {
-                listener = { name ->
-                    observer?.onNext(name)
-                }
-            }
-        }
+        tvFilters.setOnClickListener { filterTaps.onNext(true) }
+        catalogueRecycler.adapter = adapter
+    }
+
+    override fun setupUI(items: List<Catalogue>) {
+        adapter.setItems(items)
+    }
+
+    override fun categoryTaps(): Observable<String> {
+        return itemTaps
     }
 
     override fun updateProgressbarState(isVisible: Boolean) {
-        findViewById<ProgressBar>(R.id.progressbar_catalogue).isVisible = isVisible
+        progressBar.isVisible = isVisible
     }
 
     override fun onCategoryToggle(): Observable<Boolean> {
-        return object : Observable<Boolean>() {
-            override fun subscribeActual(observer: Observer<in Boolean>?) {
-                fun printCurrentThread(tag: String) = println("$tag: ${Thread.currentThread().name.substringBefore("-")}")
-                printCurrentThread("main thread name")
-                findViewById<TextView>(R.id.filters).setOnClickListener {
-                    observer?.onNext(true)
-                }
-            }
-        }
+        return filterTaps
     }
 }
