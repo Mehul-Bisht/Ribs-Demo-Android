@@ -4,12 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.ribs_demo_android.R
 import com.example.ribs_demo_android.network.CategoryService
-import com.example.ribs_demo_android.network.repository.CategoryRepositoryImpl
-import com.example.ribs_demo_android.ribs.root.RootBuilder
-import com.example.ribs_demo_android.ribs.root.home.HomeBuilder
-import com.example.ribs_demo_android.ribs.root.repository.CategoryRepository
 import com.example.ribs_demo_android.util.Constants
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.uber.rib.core.InteractorBaseComponent
 import com.uber.rib.core.ViewBuilder
 import dagger.Binds

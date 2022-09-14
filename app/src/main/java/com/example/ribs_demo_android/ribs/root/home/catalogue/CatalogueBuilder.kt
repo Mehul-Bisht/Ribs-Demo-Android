@@ -13,7 +13,6 @@ import com.example.ribs_demo_android.ribs.root.home.catalogue.details.DetailsSch
 import com.example.ribs_demo_android.ribs.root.repository.CatalogueRepository
 import com.example.ribs_demo_android.ribs.root.repository.DetailsRepository
 import com.example.ribs_demo_android.util.Constants
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.uber.rib.core.InteractorBaseComponent
 import com.uber.rib.core.ViewBuilder
 import dagger.Binds

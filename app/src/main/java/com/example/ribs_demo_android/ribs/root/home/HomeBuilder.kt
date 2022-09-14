@@ -5,14 +5,12 @@ import android.view.ViewGroup
 import com.example.ribs_demo_android.R
 import com.example.ribs_demo_android.network.CatalogueService
 import com.example.ribs_demo_android.network.repository.CatalogueRepositoryImpl
-import com.example.ribs_demo_android.ribs.root.category.CategoryInteractor
 import com.example.ribs_demo_android.ribs.root.home.catalogue.CatalogueBuilder
 import com.example.ribs_demo_android.ribs.root.home.catalogue.CatalogueInteractor
 import com.example.ribs_demo_android.ribs.root.home.catalogue.CatalogueScheduler
 import com.example.ribs_demo_android.ribs.root.home.catalogue.CatalogueSchedulerImpl
 import com.example.ribs_demo_android.ribs.root.repository.CatalogueRepository
 import com.example.ribs_demo_android.util.Constants
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.uber.rib.core.InteractorBaseComponent
 import com.uber.rib.core.ViewBuilder
 import dagger.Binds
@@ -96,7 +94,7 @@ class HomeBuilder(dependency: ParentComponent) :
             ): Retrofit {
                 return Retrofit.Builder()
                     .baseUrl(Constants.BASE_URL)
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                     .addConverterFactory(gsonConverterFactory)
                     .client(clientHome)
                     .build()
@@ -106,14 +104,8 @@ class HomeBuilder(dependency: ParentComponent) :
             @Provides
             @JvmStatic
             internal fun provideService(
-                gsonConverterFactory: GsonConverterFactory
+                retrofit: Retrofit,
             ): CatalogueService {
-                val retrofit = Retrofit.Builder()
-                    .baseUrl(Constants.BASE_URL)
-                    .addConverterFactory(gsonConverterFactory)
-                    .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-                    .client(clientHome)
-                    .build()
                 return retrofit.create(CatalogueService::class.java)
             }
 
