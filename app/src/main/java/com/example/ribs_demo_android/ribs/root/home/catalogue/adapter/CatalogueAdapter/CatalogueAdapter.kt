@@ -1,5 +1,6 @@
 package com.example.ribs_demo_android.ribs.root.home.catalogue.adapter.CatalogueAdapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -20,14 +21,17 @@ class CatalogueAdapter(
 
     inner class ViewHolder(private val binding: ItemCatalogueBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.root.setOnClickListener { v ->
+                onClick(items[adapterPosition].name)
+            }
+        }
 
         fun bind(item: Catalogue?) {
             item?.let {
                 binding.name.text = it.name
                 binding.rarity.text = it.rarity
-                binding.root.setOnClickListener { v ->
-                    onClick(it.name)
-                }
+
 
                 Glide.with(binding.root)
                     .load(it.imageUrl)

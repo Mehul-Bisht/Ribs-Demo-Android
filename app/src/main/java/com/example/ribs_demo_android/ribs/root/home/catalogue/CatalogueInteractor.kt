@@ -66,6 +66,7 @@ class CatalogueInteractor : Interactor<CatalogueInteractor.CataloguePresenter, C
             .doOnSubscribe { disposables.add(it) }
             .observeOn(catalogueScheduler.main)
             .subscribe({ category ->
+                    Log.e(this.javaClass.name, "itemClickedObserved: $category")
                     router.attachDetails()
                     dataStream.setData(category)
                 }) {Log.e(TAG, it.toString())}

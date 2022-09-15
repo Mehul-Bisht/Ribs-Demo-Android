@@ -2,6 +2,7 @@ package com.example.ribs_demo_android.ribs.root.home.catalogue
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -36,7 +37,8 @@ class CatalogueView @JvmOverloads constructor(
         this.progressBar = findViewById(R.id.progressbar_catalogue)
         this.tvFilters = findViewById(R.id.filters)
         adapter = CatalogueAdapter { name ->
-           itemTaps.onNext(name)
+            Log.e(this.javaClass.name, "itemClicked: $name")
+            itemTaps.onNext(name)
         }
         tvFilters.setOnClickListener { filterTaps.onNext(true) }
         catalogueRecycler.adapter = adapter

@@ -11,6 +11,7 @@ import com.uber.rib.core.Bundle
 import com.uber.rib.core.Interactor
 import com.uber.rib.core.RibInteractor
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
 
 /**
@@ -42,6 +43,8 @@ class DetailsInteractor : Interactor<DetailsInteractor.DetailsPresenter, Details
     @Inject
     lateinit var detailsRepository: DetailsRepository
 
+    private var disposables = CompositeDisposable()
+
     override fun didBecomeActive(savedInstanceState: Bundle?) {
         super.didBecomeActive(savedInstanceState)
 
@@ -53,14 +56,16 @@ class DetailsInteractor : Interactor<DetailsInteractor.DetailsPresenter, Details
 
     fun setupUI() {
         dataStream.data()
-            .`as`(AutoDispose.autoDisposable(this))
+            .doOnSubscribe { disposables.add(it) }
             .subscribe({fetchDetails(it)}) {
                 Log.e(TAG, it.toString())
             }
     }
 
     private fun fetchDetails(detail: String) {
+        Log.e(this.javaClass.name, "fetchDetails::$detail")
         detailsRepository.getDetail(detail)
+            .doOnSubscribe { disposables.add(it) }
             .subscribeOn(detailsScheduler.io)
             .observeOn(detailsScheduler.main)
             .subscribe({ res -> handleResult(res) }) {
@@ -87,6 +92,7 @@ class DetailsInteractor : Interactor<DetailsInteractor.DetailsPresenter, Details
         presenter.onBack()
             .subscribeOn(detailsScheduler.main)
             .observeOn(detailsScheduler.main)
+            .doOnSubscribe { disposables.add(it) }
             .subscribe({detailsListener.onBackPress()}) {
                 Log.e(TAG, it.toString())
             }
@@ -94,7 +100,10 @@ class DetailsInteractor : Interactor<DetailsInteractor.DetailsPresenter, Details
 
     override fun willResignActive() {
         super.willResignActive()
-
+        if (!disposables.isDisposed) {
+            disposables.dispose()
+            disposables = CompositeDisposable()
+        }
         // TODO: Perform any required clean up here, or delete this method entirely if not needed.
     }
 
