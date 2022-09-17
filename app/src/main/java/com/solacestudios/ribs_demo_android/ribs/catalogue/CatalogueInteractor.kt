@@ -6,6 +6,7 @@ import com.solacestudios.ribs_demo_android.models.CatalogueResponse
 import com.solacestudios.ribs_demo_android.network.CatalogueService
 import com.solacestudios.ribs_demo_android.ribs.details.DetailsInteractor
 import com.solacestudios.ribs_demo_android.repository.CatalogueRepository
+import com.solacestudios.ribs_demo_android.util.MutableDataStream
 import com.solacestudios.ribs_demo_android.util.Resource
 import com.uber.rib.core.Bundle
 import com.uber.rib.core.Interactor
@@ -20,23 +21,23 @@ import javax.inject.Inject
  * TODO describe the logic of this scope.
  */
 @RibInteractor
-class CatalogueInteractor : Interactor<CatalogueInteractor.CataloguePresenter, CatalogueRouter>() {
+class CatalogueInteractor : Interactor<CatalogueInteractor.Presenter, CatalogueRouter>() {
     companion object {
         const val TAG = "CatalogueInteractor"
     }
     @Inject
-    lateinit var presenter: CataloguePresenter
+    lateinit var buildPresenter: Presenter
 
     @Inject
     lateinit var catalogueService: CatalogueService
 
     @Inject
-    lateinit var catalogueListener: CatalogueListener
+    lateinit var catalogueListener: Listener
 
     @Inject
     lateinit var catalogueRepository: CatalogueRepository
 
-    @Inject @CatalogueBuilder.CatalogueInternal
+    @Inject @CatalogueInternal
     lateinit var dataStream: MutableDataStream
 
     @Inject
@@ -61,7 +62,7 @@ class CatalogueInteractor : Interactor<CatalogueInteractor.CataloguePresenter, C
     }
 
     private fun handleCategoryTaps() {
-        presenter.categoryTaps()
+        buildPresenter.categoryTaps()
             .doOnSubscribe { disposables.add(it) }
             .observeOn(catalogueScheduler.main)
             .subscribe({ category ->
@@ -74,14 +75,14 @@ class CatalogueInteractor : Interactor<CatalogueInteractor.CataloguePresenter, C
     private fun handleResult(state: Resource<CatalogueResponse>) {
         when (state) {
             is Resource.Loading -> {
-                presenter.updateProgressbarState(true)
+                buildPresenter.updateProgressbarState(true)
             }
             is Resource.Success -> {
-                presenter.updateProgressbarState(false)
-                presenter.setupUI(state.data!!.brawlers)
+                buildPresenter.updateProgressbarState(false)
+                buildPresenter.setupUI(state.data!!.brawlers)
             }
             is Resource.Error -> {
-                presenter.updateProgressbarState(false)
+                buildPresenter.updateProgressbarState(false)
             }
         }
     }
@@ -91,7 +92,7 @@ class CatalogueInteractor : Interactor<CatalogueInteractor.CataloguePresenter, C
     }
 
     fun handleCategoryToggle() {
-        presenter.onCategoryToggle()
+        buildPresenter.onCategoryToggle()
             .subscribeOn(catalogueScheduler.io)
             .observeOn(catalogueScheduler.main)
             .doOnSubscribe { disposables.add(it) }
@@ -113,18 +114,18 @@ class CatalogueInteractor : Interactor<CatalogueInteractor.CataloguePresenter, C
     /**
      * Presenter interface implemented by this RIB's view.
      */
-    interface CataloguePresenter {
+    interface Presenter {
         fun setupUI(items: List<Catalogue>)
         fun updateProgressbarState(isVisible: Boolean)
         fun onCategoryToggle(): Observable<Boolean>
         fun categoryTaps(): Observable<String>
     }
 
-    interface CatalogueListener {
+    interface Listener {
         fun onClick()
     }
 
-    inner class DetailsListener: DetailsInteractor.DetailsListener {
+    inner class DetailsParentListener: DetailsInteractor.Listener {
         override fun onBackPress() {
             router.detachDetails()
         }

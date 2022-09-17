@@ -4,6 +4,7 @@ import com.solacestudios.ribs_demo_android.ribs.category.CategoryInteractor
 import com.solacestudios.ribs_demo_android.ribs.home.HomeInteractor
 import com.uber.rib.core.Bundle
 import com.uber.rib.core.Interactor
+import com.uber.rib.core.Presenter
 import com.uber.rib.core.RibInteractor
 import javax.inject.Inject
 
@@ -13,10 +14,10 @@ import javax.inject.Inject
  * TODO describe the logic of this scope.
  */
 @RibInteractor
-class RootInteractor : Interactor<RootInteractor.RootPresenter, RootRouter>() {
+class RootInteractor : Interactor<RootInteractor.Presenter, RootRouter>() {
 
     @Inject
-    lateinit var presenter: RootPresenter
+    lateinit var buildPresenter: Presenter
 
     override fun didBecomeActive(savedInstanceState: Bundle?) {
         super.didBecomeActive(savedInstanceState)
@@ -34,19 +35,19 @@ class RootInteractor : Interactor<RootInteractor.RootPresenter, RootRouter>() {
     /**
      * Presenter interface implemented by this RIB's view.
      */
-    interface RootPresenter
+    interface Presenter
 
-    inner class RootListener: HomeInteractor.HomeToggleListener {
+    inner class HomeParentListener : HomeInteractor.Listener {
         override fun toggleHome() {
             router.detachHome()
             router.attachCategory()
         }
     }
-
-    inner class RootCategoryListener: CategoryInteractor.CategoryToggleListener {
+    inner class CategoryParentListener : CategoryInteractor.Listener {
         override fun toggleCategory() {
             router.detachCategory()
             router.attachHome()
         }
     }
+
 }

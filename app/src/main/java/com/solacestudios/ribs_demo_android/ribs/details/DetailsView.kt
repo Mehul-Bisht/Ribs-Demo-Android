@@ -21,7 +21,7 @@ class DetailsView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
-) : ConstraintLayout(context, attrs, defStyle), DetailsInteractor.DetailsPresenter {
+) : ConstraintLayout(context, attrs, defStyle), DetailsInteractor.Presenter {
     private lateinit var tvName: TextView
     private lateinit var tvRarity: TextView
     private lateinit var tvHp: TextView

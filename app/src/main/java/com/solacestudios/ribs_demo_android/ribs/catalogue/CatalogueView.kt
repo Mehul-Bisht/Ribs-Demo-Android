@@ -15,13 +15,13 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
 
 /**
- * Top level view for {@link CatalogueBuilder.CatalogueScope}.
+ * Top level view for {@link CatalogueScope}.
  */
 class CatalogueView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
-) : ConstraintLayout(context, attrs, defStyle), CatalogueInteractor.CataloguePresenter {
+) : ConstraintLayout(context, attrs, defStyle), CatalogueInteractor.Presenter {
     private lateinit var catalogueRecycler: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var tvFilters: TextView

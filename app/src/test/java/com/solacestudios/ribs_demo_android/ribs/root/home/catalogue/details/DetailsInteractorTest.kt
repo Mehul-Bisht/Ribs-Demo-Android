@@ -3,7 +3,7 @@ package com.solacestudios.ribs_demo_android.ribs.root.home.catalogue.details
 import com.solacestudios.ribs_demo_android.network.DetailsService
 import com.solacestudios.ribs_demo_android.network.FakeResponse
 import com.solacestudios.ribs_demo_android.repository.DetailsRepositoryImpl
-import com.solacestudios.ribs_demo_android.ribs.catalogue.DataStream
+import com.solacestudios.ribs_demo_android.util.DataStream
 import com.solacestudios.ribs_demo_android.ribs.details.DetailsInteractor
 import com.solacestudios.ribs_demo_android.repository.DetailsRepository
 import com.solacestudios.ribs_demo_android.util.Resource
@@ -39,7 +39,7 @@ class DetailsInteractorTest {
         interactor.detailsRepository = repository
         interactor.dataStream = datastream
         interactor.service = service
-        interactor.presenter = presenter
+        interactor.buildPresenter = presenter
         interactor.detailsListener = listener
     }
 

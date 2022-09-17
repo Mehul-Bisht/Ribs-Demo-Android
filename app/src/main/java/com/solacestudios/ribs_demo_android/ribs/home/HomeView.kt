@@ -11,4 +11,4 @@ class HomeView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
-) : LinearLayout(context, attrs, defStyle), HomeInteractor.HomePresenter
+) : LinearLayout(context, attrs, defStyle), HomeInteractor.Presenter

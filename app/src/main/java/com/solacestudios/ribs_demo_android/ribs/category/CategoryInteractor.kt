@@ -21,18 +21,18 @@ import javax.inject.Named
  * TODO describe the logic of this scope.
  */
 @RibInteractor
-class CategoryInteractor : Interactor<CategoryInteractor.CategoryPresenter, CategoryRouter>() {
+class CategoryInteractor : Interactor<CategoryInteractor.Presenter, CategoryRouter>() {
     companion object {
         const val TAG = "CategoryInteractor"
     }
     @Inject
-    lateinit var presenter: CategoryPresenter
+    lateinit var buildPresenter: Presenter
 
     @Inject
     lateinit var categoryService: CategoryService
 
     @Inject
-    lateinit var categoryToggleListener: CategoryToggleListener
+    lateinit var listener: Listener
 
     @Inject
     @Named("category")
@@ -63,17 +63,17 @@ class CategoryInteractor : Interactor<CategoryInteractor.CategoryPresenter, Cate
     }
 
     fun handleToggle() {
-        presenter.toggle()
+        buildPresenter.toggle()
             .doOnSubscribe { disposables.add(it)}
             .subscribe({
-                categoryToggleListener.toggleCategory()
+                listener.toggleCategory()
             }) {
                 Log.e(TAG, "handleToggleFailed::$it ::Thread:: ${Thread.currentThread().name}")
             }
     }
 
     fun getChip() {
-        presenter.getChip()
+        buildPresenter.getChip()
             .doOnSubscribe { disposables.add(it)}
             .subscribeOn(categoryScheduler.io)
             .observeOn(categoryScheduler.main)
@@ -95,14 +95,14 @@ class CategoryInteractor : Interactor<CategoryInteractor.CategoryPresenter, Cate
     private fun handleResult(result: Resource<CatalogueResponse>) {
         when (result) {
             is Resource.Loading -> {
-                presenter.updateProgressbarState(true)
+                buildPresenter.updateProgressbarState(true)
             }
             is Resource.Success -> {
-                presenter.setup(result.data?.brawlers!!)
-                presenter.updateProgressbarState(false)
+                buildPresenter.setup(result.data?.brawlers!!)
+                buildPresenter.updateProgressbarState(false)
             }
             is Resource.Error -> {
-                presenter.updateProgressbarState(false)
+                buildPresenter.updateProgressbarState(false)
             }
         }
     }
@@ -119,14 +119,14 @@ class CategoryInteractor : Interactor<CategoryInteractor.CategoryPresenter, Cate
     /**
      * Presenter interface implemented by this RIB's view.
      */
-    interface CategoryPresenter {
+    interface Presenter {
         fun setup(items: List<Catalogue>)
         fun toggle(): Observable<Boolean>
         fun getChip(): Observable<String>
         fun updateProgressbarState(isVisible: Boolean)
     }
 
-    interface CategoryToggleListener {
+    interface Listener {
         fun toggleCategory()
     }
 }

@@ -1,4 +1,4 @@
-package com.solacestudios.ribs_demo_android.ribs.catalogue
+package com.solacestudios.ribs_demo_android.util
 
 import io.reactivex.rxjava3.core.Observable
 

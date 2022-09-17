@@ -10,5 +10,5 @@ import com.uber.rib.core.ViewRouter
 class CategoryRouter(
     view: CategoryView,
     interactor: CategoryInteractor,
-    component: CategoryBuilder.Component
+    component: CategoryComponent
 ) : ViewRouter<CategoryView, CategoryInteractor>(view, interactor, component)

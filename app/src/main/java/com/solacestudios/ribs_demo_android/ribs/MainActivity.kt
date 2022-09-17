@@ -3,6 +3,9 @@ package com.solacestudios.ribs_demo_android.ribs
 import android.util.Log
 import android.view.ViewGroup
 import com.solacestudios.ribs_demo_android.ribs.root.RootBuilder
+import com.solacestudios.ribs_demo_android.ribs.root.RootInteractor
+import com.solacestudios.ribs_demo_android.ribs.root.RootView
+import com.solacestudios.ribscodegen.root.RootComponent
 import com.uber.rib.core.RibActivity
 import com.uber.rib.core.ViewRouter
 import io.reactivex.exceptions.UndeliverableException
@@ -12,9 +15,7 @@ import java.net.SocketException
 
 class MainActivity : RibActivity() {
 
-    override fun createRouter(parentViewGroup: ViewGroup): ViewRouter<*, *> {
-        val rootBuilder: RootBuilder = RootBuilder(object : RootBuilder.ParentComponent{})
-
+    override fun createRouter(parentViewGroup: ViewGroup): ViewRouter<RootView, RootInteractor> {
         RxJavaPlugins.setErrorHandler { e: Throwable ->
             var x = e
             if (x is UndeliverableException) {
@@ -44,6 +45,6 @@ class MainActivity : RibActivity() {
             Log.println(Log.WARN,"Undeliverable exception received, not sure what to do", x.message!!)
         }
 
-        return rootBuilder.build(parentViewGroup)
+        return RootBuilder(object : RootComponent.ParentComponent {}).build(parentViewGroup)
     }
 }

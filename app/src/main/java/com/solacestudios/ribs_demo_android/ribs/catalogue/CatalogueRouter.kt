@@ -6,17 +6,16 @@ import com.solacestudios.ribs_demo_android.ribs.details.DetailsRouter
 import com.uber.rib.core.ViewRouter
 
 /**
- * Adds and removes children of {@link CatalogueBuilder.CatalogueScope}.
+ * Adds and removes children of {@link CatalogueScope}.
  *
  * TODO describe the possible child configurations of this scope.
  */
 class CatalogueRouter(
     view: CatalogueView,
     interactor: CatalogueInteractor,
-    component: CatalogueBuilder.Component,
+    component: CatalogueComponent,
     private val detailsBuilder: DetailsBuilder
 ) : ViewRouter<CatalogueView, CatalogueInteractor>(view, interactor, component) {
-
     private var detailsRouter: DetailsRouter? = null
 
     fun attachDetails() {

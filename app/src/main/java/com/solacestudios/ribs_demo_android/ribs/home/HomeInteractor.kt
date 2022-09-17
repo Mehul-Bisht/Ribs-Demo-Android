@@ -15,7 +15,7 @@ import javax.inject.Inject
 class HomeInteractor : Interactor<HomeInteractor, HomeRouter>() {
 
     @Inject
-    lateinit var homeToggleListener: HomeToggleListener
+    lateinit var listener: Listener
 
     override fun didBecomeActive(savedInstanceState: Bundle?) {
         super.didBecomeActive(savedInstanceState)
@@ -30,15 +30,16 @@ class HomeInteractor : Interactor<HomeInteractor, HomeRouter>() {
         // TODO: Perform any required clean up here, or delete this method entirely if not needed.
     }
 
-    interface HomePresenter
+    interface Presenter
 
-    inner class HomeListener: CatalogueInteractor.CatalogueListener {
+    inner class CatalogueParentListener: CatalogueInteractor.Listener {
         override fun onClick() {
-            homeToggleListener.toggleHome()
+            listener.toggleHome()
         }
     }
 
-    interface HomeToggleListener {
+
+    interface Listener {
         fun toggleHome()
     }
 }

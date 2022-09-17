@@ -10,5 +10,5 @@ import com.uber.rib.core.ViewRouter
 class DetailsRouter(
     view: DetailsView,
     interactor: DetailsInteractor,
-    component: DetailsBuilder.Component
+    component: DetailsComponent
 ) : ViewRouter<DetailsView, DetailsInteractor>(view, interactor, component)

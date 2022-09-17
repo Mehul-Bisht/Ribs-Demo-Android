@@ -25,7 +25,7 @@ class CategoryView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
-) : RelativeLayout(context, attrs, defStyle), CategoryInteractor.CategoryPresenter {
+) : RelativeLayout(context, attrs, defStyle), CategoryInteractor.Presenter {
     private lateinit var categoryRecyclerView: RecyclerView
     private lateinit var tvHome: TextView
     private lateinit var chipGroup: ChipGroup

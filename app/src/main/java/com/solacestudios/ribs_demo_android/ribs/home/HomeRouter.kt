@@ -5,14 +5,14 @@ import com.solacestudios.ribs_demo_android.ribs.catalogue.CatalogueRouter
 import com.uber.rib.core.ViewRouter
 
 /**
- * Adds and removes children of {@link HomeBuilder.HomeScope}.
+ * Adds and removes children of {@link HomeScope}.
  *
  * TODO describe the possible child configurations of this scope.
  */
 class HomeRouter(
     view: HomeView,
     interactor: HomeInteractor,
-    component: HomeBuilder.Component,
+    component: HomeComponent,
     private val catalogueBuilder: CatalogueBuilder
 ) : ViewRouter<HomeView, HomeInteractor>(view, interactor, component) {
 

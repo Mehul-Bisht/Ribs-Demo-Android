@@ -4,6 +4,7 @@ import com.solacestudios.ribs_demo_android.ribs.category.CategoryBuilder
 import com.solacestudios.ribs_demo_android.ribs.category.CategoryRouter
 import com.solacestudios.ribs_demo_android.ribs.home.HomeBuilder
 import com.solacestudios.ribs_demo_android.ribs.home.HomeRouter
+import com.solacestudios.ribscodegen.root.RootComponent
 
 import com.uber.rib.core.ViewRouter
 
@@ -15,13 +16,12 @@ import com.uber.rib.core.ViewRouter
 class RootRouter(
     view: RootView,
     interactor: RootInteractor,
-    component: RootBuilder.Component,
-    private val homeBuilder: HomeBuilder,
-    private val categoryBuilder: CategoryBuilder
+    component: RootComponent,
+    private val categoryBuilder: CategoryBuilder,
+    private val homeBuilder: HomeBuilder
 ) : ViewRouter<RootView, RootInteractor>(view, interactor, component) {
-
-    private var homeRouter: HomeRouter? = null
     private var categoryRouter: CategoryRouter? = null
+    private var homeRouter: HomeRouter? = null
 
     fun attachHome() {
         homeRouter = homeBuilder.build(view)

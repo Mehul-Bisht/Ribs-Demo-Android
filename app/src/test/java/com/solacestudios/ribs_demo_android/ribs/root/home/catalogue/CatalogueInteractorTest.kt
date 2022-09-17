@@ -5,7 +5,7 @@ import com.solacestudios.ribs_demo_android.network.FakeResponse
 import com.solacestudios.ribs_demo_android.repository.CatalogueRepositoryImpl
 import com.solacestudios.ribs_demo_android.ribs.catalogue.CatalogueInteractor
 import com.solacestudios.ribs_demo_android.ribs.catalogue.CatalogueRouter
-import com.solacestudios.ribs_demo_android.ribs.catalogue.MutableDataStream
+import com.solacestudios.ribs_demo_android.util.MutableDataStream
 import com.solacestudios.ribs_demo_android.ribs.root.home.catalogue.*
 import com.solacestudios.ribs_demo_android.repository.CatalogueRepository
 import com.solacestudios.ribs_demo_android.util.Resource
@@ -44,7 +44,7 @@ class CatalogueInteractorTest {
 
         interactor = CatalogueInteractor()
         interactor.catalogueRepository = repository
-        interactor.presenter = presenter
+        interactor.buildPresenter = presenter
         interactor.catalogueScheduler = fakeScheduler
         interactor.catalogueListener = listener
         interactor.dataStream = dataStream

@@ -3,7 +3,7 @@ package com.solacestudios.ribs_demo_android.ribs.details
 import android.util.Log
 import com.solacestudios.ribs_demo_android.models.CatalogueDetail
 import com.solacestudios.ribs_demo_android.network.DetailsService
-import com.solacestudios.ribs_demo_android.ribs.catalogue.DataStream
+import com.solacestudios.ribs_demo_android.util.DataStream
 import com.solacestudios.ribs_demo_android.repository.DetailsRepository
 import com.solacestudios.ribs_demo_android.util.Resource
 import com.uber.rib.core.Bundle
@@ -19,19 +19,19 @@ import javax.inject.Inject
  * TODO describe the logic of this scope.
  */
 @RibInteractor
-class DetailsInteractor : Interactor<DetailsInteractor.DetailsPresenter, DetailsRouter>() {
+class DetailsInteractor : Interactor<DetailsInteractor.Presenter, DetailsRouter>() {
     companion object {
         const val TAG = "DetailsInteractor"
     }
 
     @Inject
-    lateinit var presenter: DetailsPresenter
+    lateinit var buildPresenter: Presenter
 
     @Inject
     lateinit var service: DetailsService
 
     @Inject
-    lateinit var detailsListener: DetailsListener
+    lateinit var detailsListener: Listener
 
     @Inject
     lateinit var dataStream: DataStream
@@ -75,20 +75,20 @@ class DetailsInteractor : Interactor<DetailsInteractor.DetailsPresenter, Details
     private fun handleResult(result: Resource<CatalogueDetail>) {
         when (result) {
             is Resource.Loading -> {
-                presenter.updateProgressbarState(true)
+                buildPresenter.updateProgressbarState(true)
             }
             is Resource.Success -> {
-                presenter.setData(result.data!!)
-                presenter.updateProgressbarState(false)
+                buildPresenter.setData(result.data!!)
+                buildPresenter.updateProgressbarState(false)
             }
             is Resource.Error -> {
-                presenter.updateProgressbarState(false)
+                buildPresenter.updateProgressbarState(false)
             }
         }
     }
 
     fun onBack() {
-        presenter.onBack()
+        buildPresenter.onBack()
             .subscribeOn(detailsScheduler.main)
             .observeOn(detailsScheduler.main)
             .doOnSubscribe { disposables.add(it) }
@@ -109,13 +109,13 @@ class DetailsInteractor : Interactor<DetailsInteractor.DetailsPresenter, Details
     /**
      * Presenter interface implemented by this RIB's view.
      */
-    interface DetailsPresenter {
+    interface Presenter {
         fun onBack(): Observable<Boolean>
         fun setData(data: CatalogueDetail)
         fun updateProgressbarState(isVisible: Boolean)
     }
 
-    interface DetailsListener {
+    interface Listener {
         fun onBackPress()
     }
 }
