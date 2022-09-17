@@ -15,6 +15,7 @@ class CategoryBuilder(dependency: CategoryComponent.ParentComponent) :
 
     fun build(parentViewGroup: ViewGroup): CategoryRouter {
         val view = createView(parentViewGroup)
+        view.initViewIds()
         val interactor = CategoryInteractor()
         val component = DaggerCategoryComponent.builder()
             .parentComponent(dependency)
