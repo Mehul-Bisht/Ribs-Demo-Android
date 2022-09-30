@@ -53,8 +53,12 @@ abstract class CategoryModule {
 
     @Module
     companion object {
-        var logging : HttpLoggingInterceptor = HttpLoggingInterceptor().setLevel(
-            HttpLoggingInterceptor.Level.BODY)
+        var logging : HttpLoggingInterceptor = run {
+            val httpLoggingInterceptor = HttpLoggingInterceptor()
+            httpLoggingInterceptor.apply {
+                httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+            }
+        }
         var client : OkHttpClient = OkHttpClient.Builder().addInterceptor(logging).build()
 
         @CategoryScope
@@ -90,16 +94,6 @@ abstract class CategoryModule {
         ): CategoryService {
             return retrofit.create(CategoryService::class.java)
         }
-
-        @CategoryScope
-        @Provides
-        @JvmStatic
-        @Named("category")
-        internal fun provideCategorySchedulers(): CategoryScheduler {
-            return CategorySchedulerImpl()
-        }
-
-
     }
 }
 

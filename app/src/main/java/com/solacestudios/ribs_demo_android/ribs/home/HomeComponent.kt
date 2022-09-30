@@ -6,6 +6,7 @@ import com.solacestudios.ribs_demo_android.repository.CatalogueRepository
 import com.solacestudios.ribs_demo_android.repository.CatalogueRepositoryImpl
 import com.solacestudios.ribs_demo_android.ribs.catalogue.*
 import com.solacestudios.ribs_demo_android.util.Constants
+import com.solacestudios.ribs_demo_android.util.RibsScheduler
 import com.uber.rib.core.InteractorBaseComponent
 import dagger.*
 import okhttp3.OkHttpClient
@@ -56,8 +57,12 @@ abstract class HomeModule {
     @Module
     companion object {
 
-        var logging : HttpLoggingInterceptor = HttpLoggingInterceptor().setLevel(
-            HttpLoggingInterceptor.Level.BODY)
+        var logging : HttpLoggingInterceptor = run {
+            val httpLoggingInterceptor = HttpLoggingInterceptor()
+            httpLoggingInterceptor.apply {
+                httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+            }
+        }
         var clientHome : OkHttpClient = OkHttpClient.Builder().addInterceptor(logging).build()
 
         @HomeScope
@@ -99,17 +104,9 @@ abstract class HomeModule {
         @Provides
         @JvmStatic
         internal fun provideCatalogueRepository(
-            service: CatalogueService,
-            scheduler: CatalogueScheduler
+            service: CatalogueService
         ): CatalogueRepository {
-            return CatalogueRepositoryImpl(service, scheduler)
-        }
-
-        @HomeScope
-        @Provides
-        @JvmStatic
-        internal fun provideCatalogueSchedulers(): CatalogueScheduler {
-            return CatalogueSchedulerImpl()
+            return CatalogueRepositoryImpl(service)
         }
 
         @Provides

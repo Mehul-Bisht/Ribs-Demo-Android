@@ -7,6 +7,8 @@ import com.solacestudios.ribs_demo_android.network.CategoryService
 import com.solacestudios.ribs_demo_android.repository.CategoryRepositoryImpl
 import com.solacestudios.ribs_demo_android.repository.CategoryRepository
 import com.solacestudios.ribs_demo_android.util.Resource
+import com.solacestudios.ribs_demo_android.util.RibsScheduler
+import com.solacestudios.ribs_demo_android.util.RibsSchedulerImpl
 import com.uber.rib.core.Bundle
 import com.uber.rib.core.Interactor
 import com.uber.rib.core.RibInteractor
@@ -24,6 +26,7 @@ import javax.inject.Named
 class CategoryInteractor : Interactor<CategoryInteractor.Presenter, CategoryRouter>() {
     companion object {
         const val TAG = "CategoryInteractor"
+        var categoryScheduler: RibsScheduler = RibsSchedulerImpl()
     }
     @Inject
     lateinit var buildPresenter: Presenter
@@ -33,10 +36,6 @@ class CategoryInteractor : Interactor<CategoryInteractor.Presenter, CategoryRout
 
     @Inject
     lateinit var listener: Listener
-
-    @Inject
-    @Named("category")
-    lateinit var categoryScheduler: CategoryScheduler
 
 //    @Inject
 //    @Named("categoryRepo")
@@ -59,7 +58,9 @@ class CategoryInteractor : Interactor<CategoryInteractor.Presenter, CategoryRout
     }
 
     fun init() {
-        categoryRepository = CategoryRepositoryImpl(categoryService, categoryScheduler)
+        Log.e(TAG, "Entered init function")
+
+        categoryRepository = CategoryRepositoryImpl(categoryService)
     }
 
     fun handleToggle() {
@@ -67,6 +68,7 @@ class CategoryInteractor : Interactor<CategoryInteractor.Presenter, CategoryRout
             .doOnSubscribe { disposables.add(it)}
             .subscribe({
                 listener.toggleCategory()
+                Log.e(TAG, "handleToggle::$it ::Thread:: ${Thread.currentThread().name}")
             }) {
                 Log.e(TAG, "handleToggleFailed::$it ::Thread:: ${Thread.currentThread().name}")
             }

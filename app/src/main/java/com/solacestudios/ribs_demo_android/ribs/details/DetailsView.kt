@@ -38,6 +38,7 @@ class DetailsView @JvmOverloads constructor(
         imgBack = findViewById(R.id.back)
     }
 
+    //Create an observable that emits on view click events
     override fun onBack(): Observable<Boolean> {
        return imgBack.clicks().map { true }
     }

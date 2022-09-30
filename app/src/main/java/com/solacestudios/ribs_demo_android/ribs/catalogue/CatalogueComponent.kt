@@ -8,8 +8,6 @@ import com.solacestudios.ribs_demo_android.repository.DetailsRepository
 import com.solacestudios.ribs_demo_android.repository.DetailsRepositoryImpl
 import com.solacestudios.ribs_demo_android.ribs.details.DetailsBuilder
 import com.solacestudios.ribs_demo_android.ribs.details.DetailsInteractor
-import com.solacestudios.ribs_demo_android.ribs.details.DetailsScheduler
-import com.solacestudios.ribs_demo_android.ribs.details.DetailsSchedulerImpl
 import com.solacestudios.ribs_demo_android.util.Constants
 import com.solacestudios.ribs_demo_android.ribs.details.DetailsComponent
 import com.solacestudios.ribs_demo_android.util.DataStream
@@ -39,7 +37,6 @@ interface CatalogueComponent : InteractorBaseComponent<CatalogueInteractor>, Det
         fun service(): CatalogueService
         fun catalogueListener(): CatalogueInteractor.Listener
         fun catalogueRepository(): CatalogueRepository
-        fun catalogueSchedulers(): CatalogueScheduler
     }
 
     @Component.Builder
@@ -68,22 +65,32 @@ abstract class CatalogueModule {
 
     @Module
     companion object {
-        var logging : HttpLoggingInterceptor = HttpLoggingInterceptor().setLevel(
-            HttpLoggingInterceptor.Level.BODY)
+        var logging : HttpLoggingInterceptor = run {
+            val httpLoggingInterceptor = HttpLoggingInterceptor()
+            httpLoggingInterceptor.apply {
+                httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+            }
+        }
         var clientCatalogue : OkHttpClient = OkHttpClient.Builder().addInterceptor(logging).build()
 
         @CatalogueScope
         @Provides
         @JvmStatic
-        internal fun router(view: CatalogueView, component: CatalogueComponent, interactor: CatalogueInteractor): CatalogueRouter =
+        internal fun router(view: CatalogueView,
+                            component: CatalogueComponent,
+                            interactor: CatalogueInteractor): CatalogueRouter =
             CatalogueRouter(view, interactor, component, DetailsBuilder(component))
 
+
+        //Provide Details Interactor's Listener to DetailsParent Catalogue
         @CatalogueScope
         @Provides
         @JvmStatic
         internal fun provideDetailsParentListener(interactor: CatalogueInteractor): DetailsInteractor.Listener =
             interactor.DetailsParentListener()
 
+
+        //Provide Mutable Data Stream
         @CatalogueScope
         @CatalogueInternal
         @Provides
@@ -133,16 +140,8 @@ abstract class CatalogueModule {
         @JvmStatic
         internal fun provideDetailsRepository(
             service: DetailsService,
-            scheduler: DetailsScheduler
         ): DetailsRepository {
-            return DetailsRepositoryImpl(service, scheduler)
-        }
-
-        @CatalogueScope
-        @Provides
-        @JvmStatic
-        internal fun provideDetailsScheduler(): DetailsScheduler {
-            return DetailsSchedulerImpl()
+            return DetailsRepositoryImpl(service)
         }
         
     }

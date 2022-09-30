@@ -1,17 +1,16 @@
-package com.solacestudios.ribs_demo_android.ribs.catalogue
+package com.solacestudios.ribs_demo_android.util
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-
-interface CatalogueScheduler {
+interface RibsScheduler  {
     val io: Scheduler
     val main: Scheduler
     val compute: Scheduler
 }
 
-class CatalogueSchedulerImpl(): CatalogueScheduler {
+class RibsSchedulerImpl(): RibsScheduler {
     override val io: Scheduler
         get() = Schedulers.io()
     override val main: Scheduler

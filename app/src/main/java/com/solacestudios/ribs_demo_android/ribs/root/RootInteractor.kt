@@ -1,5 +1,6 @@
 package com.solacestudios.ribs_demo_android.ribs.root
 
+import android.util.Log
 import com.solacestudios.ribs_demo_android.ribs.category.CategoryInteractor
 import com.solacestudios.ribs_demo_android.ribs.home.HomeInteractor
 import com.uber.rib.core.Bundle
@@ -39,12 +40,16 @@ class RootInteractor : Interactor<RootInteractor.Presenter, RootRouter>() {
 
     inner class HomeParentListener : HomeInteractor.Listener {
         override fun toggleHome() {
+            Log.e(this.javaClass.name, "toggleHome(), detaching home, attaching category")
+
             router.detachHome()
             router.attachCategory()
         }
     }
     inner class CategoryParentListener : CategoryInteractor.Listener {
         override fun toggleCategory() {
+            Log.e(this.javaClass.name, "toggleCategory(), detaching category,  attaching home")
+
             router.detachCategory()
             router.attachHome()
         }

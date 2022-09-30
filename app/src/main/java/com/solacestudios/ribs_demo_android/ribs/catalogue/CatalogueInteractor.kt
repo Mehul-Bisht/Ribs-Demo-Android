@@ -8,6 +8,8 @@ import com.solacestudios.ribs_demo_android.ribs.details.DetailsInteractor
 import com.solacestudios.ribs_demo_android.repository.CatalogueRepository
 import com.solacestudios.ribs_demo_android.util.MutableDataStream
 import com.solacestudios.ribs_demo_android.util.Resource
+import com.solacestudios.ribs_demo_android.util.RibsScheduler
+import com.solacestudios.ribs_demo_android.util.RibsSchedulerImpl
 import com.uber.rib.core.Bundle
 import com.uber.rib.core.Interactor
 import com.uber.rib.core.RibInteractor
@@ -24,6 +26,7 @@ import javax.inject.Inject
 class CatalogueInteractor : Interactor<CatalogueInteractor.Presenter, CatalogueRouter>() {
     companion object {
         const val TAG = "CatalogueInteractor"
+        var catalogueScheduler: RibsScheduler = RibsSchedulerImpl()
     }
     @Inject
     lateinit var buildPresenter: Presenter
@@ -40,8 +43,6 @@ class CatalogueInteractor : Interactor<CatalogueInteractor.Presenter, CatalogueR
     @Inject @CatalogueInternal
     lateinit var dataStream: MutableDataStream
 
-    @Inject
-    lateinit var catalogueScheduler: CatalogueScheduler
 
     private var disposables = CompositeDisposable()
 
@@ -73,21 +74,30 @@ class CatalogueInteractor : Interactor<CatalogueInteractor.Presenter, CatalogueR
     }
 
     private fun handleResult(state: Resource<CatalogueResponse>) {
+
         when (state) {
             is Resource.Loading -> {
+                Log.e(this.javaClass.name, "Handle Result: " + "Loading")
+
                 buildPresenter.updateProgressbarState(true)
             }
             is Resource.Success -> {
+                Log.e(this.javaClass.name, "Handle Result: " + "Success")
+
                 buildPresenter.updateProgressbarState(false)
                 buildPresenter.setupUI(state.data!!.brawlers)
             }
             is Resource.Error -> {
+                Log.e(this.javaClass.name, "Handle Result: " + "Error")
+
                 buildPresenter.updateProgressbarState(false)
             }
         }
     }
 
     fun getInitialData(page: Int): Observable<Resource<CatalogueResponse>> {
+        Log.e(this.javaClass.name, "getInitialData ")
+
         return catalogueRepository.getAll(1)
     }
 
@@ -124,6 +134,7 @@ class CatalogueInteractor : Interactor<CatalogueInteractor.Presenter, CatalogueR
     interface Listener {
         fun onClick()
     }
+
 
     inner class DetailsParentListener: DetailsInteractor.Listener {
         override fun onBackPress() {

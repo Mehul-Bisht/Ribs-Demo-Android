@@ -21,9 +21,8 @@ interface DetailsComponent : InteractorBaseComponent<DetailsInteractor> {
     interface ParentComponent {
         fun detailsListener(): DetailsInteractor.Listener
         fun service(): DetailsService
-        fun dataSteam(): DataStream
+        fun dataStream(): DataStream
         fun detailsRepository(): DetailsRepository
-        fun detailsScheduler(): DetailsScheduler
     }
 
     @Component.Builder

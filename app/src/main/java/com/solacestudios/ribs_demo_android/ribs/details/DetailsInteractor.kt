@@ -6,6 +6,8 @@ import com.solacestudios.ribs_demo_android.network.DetailsService
 import com.solacestudios.ribs_demo_android.util.DataStream
 import com.solacestudios.ribs_demo_android.repository.DetailsRepository
 import com.solacestudios.ribs_demo_android.util.Resource
+import com.solacestudios.ribs_demo_android.util.RibsScheduler
+import com.solacestudios.ribs_demo_android.util.RibsSchedulerImpl
 import com.uber.rib.core.Bundle
 import com.uber.rib.core.Interactor
 import com.uber.rib.core.RibInteractor
@@ -22,6 +24,7 @@ import javax.inject.Inject
 class DetailsInteractor : Interactor<DetailsInteractor.Presenter, DetailsRouter>() {
     companion object {
         const val TAG = "DetailsInteractor"
+        var detailsScheduler: RibsScheduler = RibsSchedulerImpl()
     }
 
     @Inject
@@ -35,9 +38,6 @@ class DetailsInteractor : Interactor<DetailsInteractor.Presenter, DetailsRouter>
 
     @Inject
     lateinit var dataStream: DataStream
-
-    @Inject
-    lateinit var detailsScheduler: DetailsScheduler
 
     @Inject
     lateinit var detailsRepository: DetailsRepository
@@ -87,6 +87,7 @@ class DetailsInteractor : Interactor<DetailsInteractor.Presenter, DetailsRouter>
         }
     }
 
+    //subscribes to view click events
     fun onBack() {
         buildPresenter.onBack()
             .subscribeOn(detailsScheduler.main)
@@ -108,6 +109,9 @@ class DetailsInteractor : Interactor<DetailsInteractor.Presenter, DetailsRouter>
 
     /**
      * Presenter interface implemented by this RIB's view.
+     * Declares functions to be defined in DetailsView
+     * Gives ability for details listener onBackPress to subscribe to click events emitted from Presenters onBack function
+     * onBack will emit when back button is clicked, onBackPress will receive that emission and do something
      */
     interface Presenter {
         fun onBack(): Observable<Boolean>
@@ -115,6 +119,8 @@ class DetailsInteractor : Interactor<DetailsInteractor.Presenter, DetailsRouter>
         fun updateProgressbarState(isVisible: Boolean)
     }
 
+    //Declares functions for details parent listener to define in catalogue interactor
+    //
     interface Listener {
         fun onBackPress()
     }

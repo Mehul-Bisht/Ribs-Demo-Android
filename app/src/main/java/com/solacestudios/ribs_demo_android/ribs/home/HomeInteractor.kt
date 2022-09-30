@@ -1,5 +1,6 @@
 package com.solacestudios.ribs_demo_android.ribs.home
 
+import android.util.Log
 import com.solacestudios.ribs_demo_android.ribs.catalogue.CatalogueInteractor
 import com.uber.rib.core.Bundle
 import com.uber.rib.core.Interactor
@@ -34,6 +35,8 @@ class HomeInteractor : Interactor<HomeInteractor, HomeRouter>() {
 
     inner class CatalogueParentListener: CatalogueInteractor.Listener {
         override fun onClick() {
+            Log.e(this.javaClass.name, "onClick, catalogue parent listener, toggling home")
+
             listener.toggleHome()
         }
     }
