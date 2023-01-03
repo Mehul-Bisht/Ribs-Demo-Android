@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ribs_demo_android">
+    package="com.solacestudios.ribs_demo_android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:name=".App"
+        android:name="com.solacestudios.ribs_demo_android.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RibsDemoAndroid">
         <activity
-            android:name=".ribs.MainActivity"
+            android:name="com.solacestudios.ribs_demo_android.ribs.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

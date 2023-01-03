@@ -8,7 +8,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.example.ribs_demo_android"
+        applicationId "com.solacestudios.ribs_demo_android"
         minSdk 23
         targetSdk 32
         versionCode 1
@@ -61,14 +61,13 @@ dependencies {
     def retrofit_version = "2.9.0"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:adapter-rxjava3:$retrofit_version"
+
+    implementation 'com.jakewharton.rxbinding4:rxbinding-core:4.0.0'
 
     def glide_version = "4.11.0"
     implementation "com.github.bumptech.glide:glide:$glide_version"
     kapt "com.github.bumptech.glide:compiler:$glide_version"
-
-    implementation 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
 
     testImplementation 'junit:junit:4.12'
     testImplementation "org.mockito:mockito-core:3.10.0"
@@ -77,4 +76,6 @@ dependencies {
     testImplementation "com.google.testing.compile:compile-testing:0.17"
     //testImplementation "org.mockito:mockito-all:1.10.19"
     testImplementation 'org.mockito:mockito-inline:2.13.0'
+
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
 }
